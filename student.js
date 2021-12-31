@@ -42,9 +42,17 @@ exports.changeactivestudent = async (req, res) => {
 }
 exports.daysPracticed = async (req, res) => {
     console.log(req.body);
-
+    let student = Student.findOne({_id: req.body.id});
+    let update; 
+    if(parseInt(student.daysPracticed)>parseInt(req.body.daysPracticed)){
+        update = parseInt(student.totalDaysPracticed) - 1;
+    }
+    else{
+    update = parseInt(student.totalDaysPracticed) + 1;
+    }
     await Student.updateOne({ _id: req.body.id }, {
-        daysPracticed: req.body.daysPracticed
+        daysPracticed: req.body.daysPracticed,
+        totalDaysPracticed: update
     });
 
 
@@ -124,8 +132,28 @@ exports.checked = async (req, res) => {
     console.log(req.body);
 
     await Student.updateOne({ _id: req.body.id }, {
-        checked: req.body.checked
+        checked: req.body.checked,
+        daystreak: req.body.daystreak,
     });
+    if(req.body.pass){
+        console.log("what about here?")
+        extra= await levelcalc(req.body.id, req.body.starpointsGoal, req.body.sp, req.body.level,req.body.npass);
+        await Student.updateOne({ _id: req.body.id }, {
+            
+            starpoints: extra
+         
+     })
+
+    }
+    else{
+        console.log(req.body.sp)
+        await Student.updateOne({ _id: req.body.id }, {
+            
+               starpoints: req.body.sp
+            
+        })
+    
+    }
    
 
 };
@@ -316,11 +344,18 @@ exports.doitAll = async (req, res) => {
 
 
             },
+            daysbool: req.body.daysbool,
+            timebool: req.body.timebool,
             starPoints: req.body.starPoints,
+            level: "0",
+            starpoints: "0",
+            starpointsGoal: "100",
             mstarpoints: req.body.manualsetup,
             goals: req.body.goals,
             weekStreak: req.body.weekStreak,
+            //weekstreak: "0", this could be an option for gamification later.
             dayStreak: req.body.dayStreak,
+            daystreak: "0",
             dayTotal: req.body.day1,
             totalDays: req.body.days,
             monthStart: req.body.smonths,
@@ -330,7 +365,9 @@ exports.doitAll = async (req, res) => {
             tsmonths: req.body.tsmonths,
             temonths: req.body.temonths,
             timeTotal: req.body.time1,
+            finalTotalTime: "0",
             time: req.body.yesnoTime,
+            totalDaysPracticed:"0",
             totalTime: "0",
             timeday: req.body.timeSync,
             hwtime: {
@@ -373,9 +410,15 @@ exports.doitAll = async (req, res) => {
             
             starPoints: req.body.starPoints,
             mstarpoints: req.body.manualsetup,
+            level: "0",
+            starpoints: "0",
+            starpointsGoal: "100",
             goals: req.body.goals,
             weekStreak: req.body.weekStreak,
+            daysbool: req.body.daysbool,
+            timebool: req.body.timebool,
             dayStreak: req.body.dayStreak,
+            daystreak: "0",
             dayTotal: req.body.day1,
             totalDays: req.body.days,
             monthStart: req.body.smonths,
@@ -385,8 +428,10 @@ exports.doitAll = async (req, res) => {
             tsmonths: req.body.tsmonths,
             temonths: req.body.temonths,
             timeTotal: req.body.time1,
+            finalTotalTime: "0",
             time: req.body.yesnoTime,
             totalTime: "0",
+            totalDaysPracticed:"0",
             timeday: req.body.timeSync,
             hwtime: {
                 mon: "0",
@@ -433,53 +478,71 @@ exports.editalltheProgress = async (req, res) => {
         console.log(req.body);
 
 
-        if (req.body.spisedited) {
+        
             await Student.updateOne({ _id: req.body.id }, {
                
-                starPoints: req.body.tempstartpoints,
-               
+                starPoints: req.body.starPoints,
+                daysbool: req.body.daysbool,
+                timebool: req.body.timebool,
+
             })
-        }
+        
       
-        if (req.body.dayisedited) {
+        if (req.body.temppracticegoal) {
+            if(req.body.temppracticegoal==="cancelday"){
+                await Student.updateOne({ _id: req.body.id }, {
+               
+                    totalDays: "",
+                })
+            }
+            else{
             await Student.updateOne({ _id: req.body.id }, {
                
-                totalDays: req.body.tempdays,
+                totalDays: req.body.totalDays,
             })
         }
-        if (req.body.minisedited) {
+        }
+        if (req.body.temptimegoal) {
+            if(req.body.temptimegoal==="canceltime"){
+                await Student.updateOne({ _id: req.body.id }, {
+               
+                    wmin: "",
+                })
+            }
+            else{
             await Student.updateOne({ _id: req.body.id }, {
-                timebiao: req.body.tempmin
+                wmin: req.body.totalTime
             })
         }
-        if (req.body.smonthsisedited) {
+        }
+        if (req.body.tempsmonths) {
             await Student.updateOne({ _id: req.body.id }, {
                
                 monthStart: req.body.tempsmonths,
                
             })
         }
-        if (req.body.emonthsisedited) {
+        if (req.body.tempemonths) {
             await Student.updateOne({ _id: req.body.id }, {
                 
                 monthEnd: req.body.tempemonths,
                 
             })
         }
-        if (req.body.tsmonthsisedited) {
+        if (req.body.temptsmonths) {
             await Student.updateOne({ _id: req.body.id }, {
                
                 tsmonths: req.body.temptsmonths,
                 
             })
         }
-        if (req.body.temonthsisedited) {
+        if (req.body.temptemonths) {
             await Student.updateOne({ _id: req.body.id }, {
                 temonths: req.body.temptemonths,
                 
             })
         }
-               
+       
 
 
     }
@@ -1045,6 +1108,22 @@ exports.hwchecked = async (req, res) => {
 
             }
             )
+            if(req.body.pass){
+                extra= await levelcalc(req.body.id, req.body.starpointsGoal, req.body.sp, req.body.level,);
+        await Student.updateOne({ _id: req.body.id }, {
+            
+            starpoints: extra
+         
+     })
+            }
+            else{
+                await Student.updateOne({ _id: req.body.id }, {
+                    
+                       starpoints: req.body.sp
+                    
+                })
+            
+            }
        
         
     }
@@ -1404,12 +1483,35 @@ exports.addgoal = async (req, res) => {
     }
 }
 exports.changeweek = async (req, res) => {
+    console.log(req.body);
+    let timeTotal= parseInt(req.body.time)+parseInt(req.body.timeTotal)
+    let totalWeekTime= parseInt(req.body.time)+parseInt(req.body.totalWeekTime)
     await Student.updateOne({ _id: req.body.id }, {
+        finalTotalTime: timeTotal,
+        timeTotal: timeTotal,
         totalWeekTime: {
-            total: req.body.time,
+            total: totalWeekTime,
 
         },
     })
+    if(req.body.pass){
+
+        extra= await levelcalc(req.body.id, req.body.starpointsGoal, req.body.sp, req.body.level,);
+        console.log(extra)
+        await Student.updateOne({ _id: req.body.id }, {
+            
+            starpoints: extra
+         
+     })
+    }
+    else{
+        await Student.updateOne({ _id: req.body.id }, {
+            
+               starpoints: req.body.sp
+            
+        })
+    
+    }
 }
 exports.hwchangeweek = async (req, res) => {
     await Student.updateOne({ 'homeworks._id': req.body.id }, {
@@ -1582,20 +1684,67 @@ exports.changetimes = async (req, res) => {
 
     console.log(req.body);
     let student = await Student.findOne({ _id: req.body.id });
-    let total = parseInt(req.body.time) + parseInt(student.totalTime);
-    let weektime = parseInt(req.body.time) + parseInt(student.totalWeekTime.total);
+    let sub= student.hwtime[req.body.day];
+    console.log(sub)
+    let add= req.body.time;
+    console.log(add)
+    let timeTotal= (parseInt(student.timeTotal)- parseInt(sub))+ parseInt(add);
+    let finalTotalTime= (parseInt(student.finalTotalTime)- parseInt(sub))+ parseInt(add);
+
+    let weektime = (parseInt(student.totalWeekTime.total) - parseInt(sub)) + parseInt(add);
+    
+    
+    
+
+        
+    
+    console.log(timeTotal)
+    
+    //let total = parseInt(req.body.time) + parseInt(student.totalTime);
+    
+    //console.log(weektime);
+
+    //let timeTotal= (parseInt(student.hwtime.[req.body.day]) -  parseInt(req.body.time))+parseInt(req.body.timeTotal)
+    //console.log(timeTotal);
     await Student.updateOne({ _id: req.body.id }, {
+        finalTotalTime: finalTotalTime.toString(),
+        timeTotal: timeTotal.toString(),
         totalWeekTime: {
-            total: weektime.toString(),
-            totalTime: total,
-        }
+            total: weektime.toString()
+        },
+     
+        
+        daystreak: req.body.daystreak
     })
+    let extra;
+    if(req.body.pass){
+        extra= await levelcalc(req.body.id, req.body.starpointsGoal, req.body.sp, req.body.level, req.body.npass);
+        await Student.updateOne({ _id: req.body.id }, {
+            
+            starpoints: extra,
+            
+
+
+         
+     })
+    }
+    else{
+        await Student.updateOne({ _id: req.body.id }, {
+            
+               starpoints: req.body.sp
+            
+        })
+    
+    }
+    
 
   
 
 
     if (req.body.day === "mon") {
         console.log(req.body.day);
+        student
+
 
         await Student.updateOne({ _id: req.body.id }, {
             hwtime: {
@@ -1715,15 +1864,42 @@ exports.changetimes = async (req, res) => {
             },
         })
     }
+   
 }
 
 
 exports.syncedchecking = async (req, res) => {
     console.log(req.body);
     let student = await Student.findOne({ _id: req.body.student });
+    let update; 
+    if(parseInt(student.daysPracticed)>parseInt(req.body.daysPracticed)){
+        update = parseInt(student.totalDaysPracticed) - 1;
+    }
+    else{
+    update = parseInt(student.totalDaysPracticed) + 1;
+    }
+    let extra;
+    if(req.body.pass){
+        extra= await levelcalc(req.body.student, req.body.starpointsGoal, req.body.sp, req.body.level, req.body.npass);
+        await Student.updateOne({ _id: req.body.student }, {
+            
+            starpoints: extra
+         
+     })
+    }
+    else{
+        await Student.updateOne({ _id: req.body.student }, {
+            
+            starpoints: req.body.sp
+    
+            },
+        );
+    }
     await Student.updateOne({ _id: req.body.student }, {
         daysPracticed: req.body.daysPracticed,
         checked: req.body.checkedd,
+        daystreak: req.body.daystreak,
+        totalDaysPracticed: update,
 
         },
     );
@@ -1830,7 +2006,7 @@ exports.syncedchecking = async (req, res) => {
             },
         })
     }
-    if (req.body.day === "S") {
+    if (req.body.day === "s") {
         await Student.updateOne({ _id: req.body.student }, {
             syncedCheckboxes: {
                 mon: student.syncedCheckboxes.mon,
@@ -1847,6 +2023,7 @@ exports.syncedchecking = async (req, res) => {
             },
         })
     }
+    //res.send(extra);
 
     
 }
@@ -2223,13 +2400,41 @@ exports.editAlltheHomeworkdiaClose = async (req, res) => {
         timeday: req.body.yesnoDay,
         checkboxes: req.body.yesnocheckboxes,
         edityesnoWeek: req.body.edityesnoWeek,
-        
+        time: req.body.edityesnoWeek,
+        dayStreak: req.body.yesnoStreak,
         min: req.body.yesnoWeektext,
         dmin: req.body.yesnoDaytext,
 
         
 
     })
+
+    if(!req.body.yesnoCheckboxsync){
+        if(req.body.yesnocheckboxes==="0"){
+            await Student.updateOne({ _id: req.body.id }, {
+                totalDays: ""
+               
+        
+                
+        
+            })
+        
+        }
+
+    }
+    if(!req.body.edityesnoWeek){
+        if(!req.body.yesnoDay){
+            await Student.updateOne({ _id: req.body.id }, {
+                wmin: ""
+               
+        
+                
+        
+            })
+        
+        }
+
+    }
 }
   
 exports.timeSync = async (req, res) => {
@@ -2446,8 +2651,26 @@ exports.goalStatusChange = async (req, res) => {
                     }
 
 
-                }
+                } 
+               
                 )
+                if(req.body.pass){
+                    extra= await levelcalc(req.body.id, req.body.starpointsGoal, req.body.sp, req.body.level, req.body.npass);
+                    await Student.updateOne({ _id: req.body.id }, {
+                        
+                        starpoints: extra
+                     
+                 })
+                }
+                else{
+                    await Student.updateOne({ _id: req.body.id }, {
+                        
+                           starpoints: req.body.sp
+                        
+                    })
+                
+                }
+                
             }
 
 
@@ -2467,6 +2690,23 @@ exports.goalStatusChange = async (req, res) => {
 
                 }
                 )
+                if(req.body.pass){
+                    extra= await levelcalc(req.body.id, req.body.starpointsGoal, req.body.sp, req.body.level, req.body.npass);
+                    await Student.updateOne({ _id: req.body.id }, {
+                        
+                        starpoints: extra
+                     
+                 })
+                }
+                else{
+                    
+                    await Student.updateOne({ _id: req.body.id }, {
+                        
+                           starpoints: req.body.sp
+                        
+                    })
+                
+                }
 
 
 
@@ -2486,6 +2726,23 @@ exports.goalStatusChange = async (req, res) => {
 
                 }
                 )
+                if(req.body.pass){
+                    extra= await levelcalc(req.body.id, req.body.starpointsGoal, req.body.sp, req.body.level, req.body.npass);
+                    await Student.updateOne({ _id: req.body.id }, {
+                        
+                        starpoints: extra
+                     
+                 })
+                }
+                else{
+                    
+                    await Student.updateOne({ _id: req.body.id }, {
+                        
+                           starpoints: req.body.sp
+                        
+                    })
+                
+                }
             }
 
 
@@ -2502,6 +2759,23 @@ exports.goalStatusChange = async (req, res) => {
 
                 }
                 )
+                if(req.body.pass){
+                    extra= await levelcalc(req.body.id, req.body.starpointsGoal, req.body.sp, req.body.level, req.body.npass);
+                    await Student.updateOne({ _id: req.body.id }, {
+                        
+                        starpoints: extra
+                     
+                 })
+                }
+                else{
+                    
+                    await Student.updateOne({ _id: req.body.id }, {
+                        
+                           starpoints: req.body.sp
+                        
+                    })
+                
+                }
 
 
 
@@ -2540,3 +2814,127 @@ exports.pastFirstTime = async (req, res) => {
     }
 }
 
+
+levelcalc = async (id, starpointsGoal, sp, level, npass ) =>{
+    try{
+
+        if(!npass){
+
+        var newgoal = parseInt(starpointsGoal) *2;
+        var extra =  (parseInt(sp) -  parseInt(starpointsGoal)).toString();
+       // console.log("is this nan?", newgoal, extra);
+
+        
+       
+       if(parseInt(newgoal<100)){
+        newgoal= "100"
+        level++;
+    }
+        
+        
+        if (parseInt(extra) >= newgoal){
+            extra =  (parseInt(extra) -  parseInt(newgoal)).toString();
+            newgoal = newgoal *2;
+            if(parseInt(newgoal<100)){
+                newgoal= "100"
+                level++;
+            }
+            //console.log(newgoal, extra);
+
+            
+            await Student.updateOne({ _id: id }, {
+                level: (parseInt(level) + 2).toString(),
+                starpointsGoal: newgoal.toString(),
+    
+            });
+        }
+        else{
+            if(parseInt(newgoal<100)){
+                newgoal= "100"
+                level++;
+            }
+            await Student.updateOne({ _id: id }, {
+                level: (parseInt(level) + 1).toString(),
+                starpointsGoal: newgoal.toString(),
+    
+            });
+        }
+        if(parseInt(extra)===parseInt(newgoal)){
+            extra= "0"
+        }
+        if(extra<0){
+            extra=0;
+        }
+
+        return extra
+    }
+    else{
+        if(parseInt(starpointsGoal)!==100){
+        console.log(sp)
+        var newgoal = parseInt(starpointsGoal) /2;
+        var extra =   parseInt(sp) + newgoal ;
+        if(parseInt(newgoal<100)){
+            newgoal= "100"
+            level++;
+        }
+        console.log(extra, newgoal);
+
+
+        
+       
+        
+        
+        
+        if (parseInt(extra) < 0){
+            
+            newgoal = newgoal /2;
+            extra =   parseInt(extra) + newgoal ;
+            console.log(extra, newgoal);
+            if(parseInt(newgoal<100)){
+                newgoal= "100"
+                level++;
+            }
+            console.log(extra, newgoal);
+            await Student.updateOne({ _id: id }, {
+                level: (parseInt(level) - 2).toString(),
+                starpointsGoal: newgoal.toString(),
+    
+            });
+        }
+        else{
+            if(parseInt(newgoal<100)){
+                newgoal= "100"
+                level++;
+            }
+            await Student.updateOne({ _id: id }, {
+                level: (parseInt(level) - 1).toString(),
+                starpointsGoal: newgoal.toString(),
+    
+            });
+        }
+        if(parseInt(extra)===parseInt(newgoal)){
+            extra= "0"
+        }
+        if(extra<0){
+            extra=0;
+        }
+    
+
+        return extra
+    }
+    else{
+        await Student.updateOne({ _id: id }, {
+            level: "0",
+            starpointsGoal: "100",
+            
+
+        });
+        return "0"
+    }
+    }
+
+    }
+    catch(err){
+        console.log(err)
+    }
+}

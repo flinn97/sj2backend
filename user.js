@@ -135,14 +135,14 @@ module.exports = function (app) {
 
 			aws.config.setPromisesDependency();
 			aws.config.update({
-				accessKeyId: "AKIAYJURV2S75MKXEPH6",
-				secretAccessKey: "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",
+				accessKeyId: "",
+				secretAccessKey: "",
 			});
 			const s3 = new aws.S3();
 			var params = {
 				Bucket: "legatomusicphoto190010-dev",
 				Body: fs.createReadStream(req.file.path),
-				Key: `userprofileimage/${req.file.originalname}`
+				Key: `imgs/${req.file.originalname}`
 			};
 
 			await s3.upload(params, (err, data) => {
@@ -159,15 +159,19 @@ module.exports = function (app) {
 					console.log(locationUrl);
 					var params1 = {
 						Bucket: "legatomusicphoto190010-dev",
-						Key: `imgs/${req.file.originalname}`
+						Key: `imgs/${req.file.originalname}`,
+						Expires: 604800
 					};
-					var promise = s3.getSignedUrlPromise('getObject', params1);
-					promise.then(function (url) {
-						console.log(url);
-						res.send({
-							path: url
-						})
-					}, function (err) { console.log(err) });
+					res.send({
+						path: "https://ik.imagekit.io/gtsewnrjnnh/" + req.file.originalname
+					})
+				//	var promise = s3.getSignedUrlPromise('getObject', params1);
+				//	promise.then(function (url) {
+				//		console.log(url);
+				//		res.send({
+				//			path: url
+				//		})
+				//	}, function (err) { console.log(err) });
 
 				
 				}

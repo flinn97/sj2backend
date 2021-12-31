@@ -9,7 +9,7 @@ dotenv.config();
 
 //use cors, mongoose and connect to controller
 var corsOptions = {
-	origin: "http://localhost:8081"
+	origin: "*"
 };
 app.use(cors(corsOptions)); 
 
