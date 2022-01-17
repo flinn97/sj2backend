@@ -476,12 +476,33 @@ exports.doitAll = async (req, res) => {
 exports.editalltheProgress = async (req, res) => {
     try {
         console.log(req.body);
+        let student= await Student.findOne({_id: req.body.id});
+        if (student.starPoints===false){
+            await Student.updateOne({ _id: req.body.id }, {
+               
+                starPoints: req.body.starPoints,
+                starpoints: "0"
+                
+                
+
+            })
+
+        }
+        else{
+            await Student.updateOne({ _id: req.body.id }, {
+               
+                starPoints: req.body.starPoints,
+                
+               
+
+            })
+
+        }
 
 
         
             await Student.updateOne({ _id: req.body.id }, {
                
-                starPoints: req.body.starPoints,
                 daysbool: req.body.daysbool,
                 timebool: req.body.timebool,
 
