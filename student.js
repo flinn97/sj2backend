@@ -368,6 +368,7 @@ exports.doitAll = async (req, res) => {
             finalTotalTime: "0",
             time: req.body.yesnoTime,
             totalDaysPracticed:"0",
+            daysPracticed: "0",
             totalTime: "0",
             timeday: req.body.timeSync,
             hwtime: {
@@ -432,6 +433,7 @@ exports.doitAll = async (req, res) => {
             time: req.body.yesnoTime,
             totalTime: "0",
             totalDaysPracticed:"0",
+            daysPracticed: "0",
             timeday: req.body.timeSync,
             hwtime: {
                 mon: "0",
