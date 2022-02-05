@@ -40,6 +40,45 @@ exports.changeactivestudent = async (req, res) => {
    
 
 }
+/**'$set': {
+                'homeworks.$.firstMessage': false,
+            },
+            
+            $push: {
+    
+                
+                        'homeworks.$.messages': {
+                            m: req.body.message,
+                            date: req.body.date,
+                            role: req.body.role,
+    
+                        }
+                    
+    
+    
+                }
+            } */
+
+exports.newMainGoal= async (req, res) => {
+    console.log(req.body);
+    
+    await Student.updateOne({_id: req.body.id}, 
+        {
+            mainGoals: req.body.goal,
+
+            
+
+    })
+
+
+
+}
+
+exports.newSubGoal= async (req, res) => {
+
+
+}
+
 exports.daysPracticed = async (req, res) => {
     console.log(req.body);
     let student = Student.findOne({_id: req.body.id});
@@ -352,6 +391,7 @@ exports.doitAll = async (req, res) => {
             starpointsGoal: "100",
             mstarpoints: req.body.manualsetup,
             goals: req.body.goals,
+            mainGoals: [],
             weekStreak: req.body.weekStreak,
             //weekstreak: "0", this could be an option for gamification later.
             dayStreak: req.body.dayStreak,
@@ -408,7 +448,7 @@ exports.doitAll = async (req, res) => {
         await Student.updateOne({ _id: req.body.id }, {
             newlyadded: false,
             homeworks: req.body.homeworks,
-            
+            mainGoals: [],
             starPoints: req.body.starPoints,
             mstarpoints: req.body.manualsetup,
             level: "0",
@@ -1700,7 +1740,26 @@ exports.hwchangetimes = async (req, res) => {
         })
     }
 }
-
+exports.cleartotaldays= async (req, res) => { 
+    console.log(req.body)
+    await Student.updateOne({ _id: req.body.id }, {
+        totalDaysPracticed: "0",
+        daysPracticed: "0"
+     
+        
+        
+    })
+}
+    exports.cleartimepracticed = async (req, res) => { 
+        console.log(req.body)
+        await Student.updateOne({ _id: req.body.id }, {
+            finalTotalTime: "0",
+            timeTotal: "0"
+         
+            
+            
+        })
+    }
 exports.changetimes = async (req, res) => {
 
 
@@ -1737,14 +1796,16 @@ exports.changetimes = async (req, res) => {
         },
      
         
-        daystreak: req.body.daystreak
+        
     })
     let extra;
+    if(req.body.sp){
     if(req.body.pass){
         extra= await levelcalc(req.body.id, req.body.starpointsGoal, req.body.sp, req.body.level, req.body.npass);
         await Student.updateOne({ _id: req.body.id }, {
             
             starpoints: extra,
+            daystreak: req.body.daystreak
             
 
 
@@ -1754,10 +1815,12 @@ exports.changetimes = async (req, res) => {
     else{
         await Student.updateOne({ _id: req.body.id }, {
             
-               starpoints: req.body.sp
+               starpoints: req.body.sp,
+               daystreak: req.body.daystreak
             
         })
     
+    }
     }
     
 

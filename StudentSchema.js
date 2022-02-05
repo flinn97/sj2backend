@@ -132,12 +132,40 @@ const Student = mongoose.model(
 
                 },
             ],
+
+            mainGoals: [{mainGoal: {
+                title: String,
+                description: String,
+                date: String,
+                complete: Boolean,
+                completed: String,
+                goals: [
+                    {
+                        title: String,
+                        description: String,
+                        date: String,
+                        complete: Boolean,
+                        completed: String,
+    
+    
+                    },
+                ],
+                
+
+
+            }
+            }],
+
+
+
+
             mainGoal: {
                 title: String,
                 description: String,
                 date: String,
                 complete: Boolean,
-                completed: String
+                completed: String,
+                
 
 
             },

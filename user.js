@@ -106,6 +106,11 @@ module.exports = function (app) {
 	app.post("/api/auth/clearhwChecks", addStudent.clearhwChecks);
 	app.post("/api/auth/clearhwTime", addStudent.clearhwTime);
 	app.post("/api/auth/photoprac", admin.photoprac);
+	app.post("/api/auth/newMainGoal", addStudent.newMainGoal);
+	app.post("/api/auth/newSubGoal", addStudent.newSubGoal);
+	app.post("/api/auth/cleartotaldays", addStudent.cleartotaldays);
+	app.post("/api/auth/cleartimepracticed", addStudent.cleartimepracticed);
+
 
 
 
