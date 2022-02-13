@@ -391,7 +391,20 @@ exports.doitAll = async (req, res) => {
             starpointsGoal: "100",
             mstarpoints: req.body.manualsetup,
             goals: req.body.goals,
-            mainGoals: [],
+            mainGoals: [{mainGoal: {
+                title: "Edit this goal to something you like.",
+                description: "",
+                date: "",
+                complete: "",
+                completed: false,
+                goals: [
+                    
+                  
+                ],
+                
+
+
+            }}],
             weekStreak: req.body.weekStreak,
             //weekstreak: "0", this could be an option for gamification later.
             dayStreak: req.body.dayStreak,

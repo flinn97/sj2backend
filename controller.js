@@ -185,8 +185,8 @@ exports.signup = async (req, res) => {
             email: req.body.email,
             password: cryptpass,
             role: "teacher",
-            about: "Tell us more about yourself",
-            phone: "update phone number -> top right"
+            about: "",
+            phone: ""
         });
         await user.save((err, user) => {
 
