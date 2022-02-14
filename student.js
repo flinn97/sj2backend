@@ -395,8 +395,8 @@ exports.doitAll = async (req, res) => {
                 title: "Edit this goal to something you like.",
                 description: "",
                 date: "",
-                complete: "",
-                completed: false,
+                complete: false,
+                completed: "",
                 goals: [
                     
                   
