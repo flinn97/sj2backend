@@ -85,7 +85,15 @@ const Student = mongoose.model(
                 {
                     title: String,
                     description: String,
-                    hwchecked: String,
+                    hwchecked: {
+                        mon: Boolean,
+                        tues: Boolean,
+                        wed: Boolean,
+                        thur: Boolean,
+                        fri: Boolean,
+                        sat: Boolean,
+                        sun: Boolean,
+                    },
                     hwtype: String,
                     hwcheckboxes: String,
                     date: String,
@@ -107,15 +115,7 @@ const Student = mongoose.model(
                         date: String,
                         role: String,
                     }],
-                    syncedCheckboxes: {
-                        mon: Boolean,
-                        tues: Boolean,
-                        wed: Boolean,
-                        thur: Boolean,
-                        fri: Boolean,
-                        sat: Boolean,
-                        sun: Boolean,
-                    },
+                    
                     hwtime: {
                         mon: String,
                         tues: String,
@@ -134,6 +134,7 @@ const Student = mongoose.model(
             ],
 
             mainGoals: [{mainGoal: {
+                id: String,
                 title: String,
                 description: String,
                 date: String,

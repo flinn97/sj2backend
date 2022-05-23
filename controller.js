@@ -572,3 +572,70 @@ exports.getAllusers = async (req, res) => {
     }
 
 }
+function getuser(req){
+    console.log(req)
+    if(req.role==="teacher"){
+        return({
+            email: req.email,
+        role: req.role,
+        firstName: req.firstName,
+        lastName: req.lastName,
+        about: req.about,
+        phone: req.phone,
+        profilepic: req.profilepic,
+        backgroundpic: req.backgroundpic,
+        students: req.students,
+        id: req._id
+        })
+        
+    }
+    else if(req.role==="student"){
+        return({
+            firstName: req.first,
+        lastName: req.lastName,
+		userID: req.userID,
+        role: "student",
+        pastFirstTime: req.pastFirstTime,
+        scheduling: req.aschedule,
+        day: req.day,
+        newlyadded: req.newlyadded,
+            homeworks: req.homeworks,
+            mainGoal: req.mainGoal,
+            daysbool: req.daysbool,
+            timebool: req.timebool,
+            starPoints: req.starPoints,
+            level: req.level,
+            starpoints: req.starpoints,
+            starpointsGoal: req.starpointsGoal,
+            mstarpoints: req.manualsetup,
+            goals: req.goals,
+            mainGoals: req.mainGoals,
+            weekStreak: req.weekStreak,
+            dayStreak: req.dayStreak,
+            daystreak: req.daystreak,
+            dayTotal: req.day1,
+            totalDays: req.days,
+            monthStart: req.smonths,
+            monthEnd: req.emonths,
+            timebiao: req.timeframePracticebiao,
+            wmin: req.min,
+            tsmonths: req.tsmonths,
+            temonths: req.temonths,
+            timeTotal: req.time1,
+            finalTotalTime: req.finalTotalTime,
+            time: req.yesnoTime,
+            totalDaysPracticed:req.totalDaysPracticed,
+            daysPracticed: req.daysPracticed,
+            totalTime: req.totalTime,
+            timeday: req.timeSync,
+            hwtime: req.hwtime,
+            min: req.weeklytimebiao,
+            daybiao: req.dailytimebiao,
+            dmin: req.dmin,
+            totalWeekTime: req.totalWeekTime,
+            checkboxes: req.checkbox,
+            syncedCheckbox: req.syncCheckbox,
+            syncedCheckboxes: req.syncedCheckboxes
+        })
+    }
+}

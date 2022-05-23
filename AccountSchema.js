@@ -10,6 +10,7 @@ const Account = mongoose.model(
         role: String,
         DoubleAccount: Boolean,
         sep: Boolean,
+        username: String,
 
         account: [
             {

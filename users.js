@@ -5,7 +5,7 @@ const User = mongoose.model(
     new mongoose.Schema({
         students: [
             {
-                type: mongoose.Schema.Types.ObjectId,
+                type: mongoose.Schema.Types.Mixed,
                 ref: "student"
                
             },
